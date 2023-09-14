@@ -183,7 +183,7 @@ class WidgetMorePDB(QWidget):
         super(WidgetMorePDB, self).__init__()
         self.ui = Ui_Form_more_pdb()
         self.ui.setupUi(self)
-        self.setWindowTitle("Ucitavanje aminokiselinskih sekvenci")
+        self.setWindowTitle("Ucitavanje PDB datoteka ili PB sekvenci u FASTA formatu")
 
     def clearContent(self):
         self.ui.clearContent()
