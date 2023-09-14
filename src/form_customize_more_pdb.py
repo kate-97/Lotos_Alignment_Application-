@@ -126,7 +126,6 @@ class Ui_Form_more_pdb(QWidget):
     def onPbAddPDBClicked(self):
         pdb_id = self.lineEdit.text()
         self.lineEdit.clear()
-        self.listWidget.addItem(pdb_id)
         self.listWidget.addItem("(PDB id) " + pdb_id)
         self.sources.append((pdb_id, "id"))
         countPdb = int(self.label_Counter.text())

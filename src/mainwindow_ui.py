@@ -60,7 +60,7 @@ class Ui_MainWindow(QMainWindow):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.applicationLogo = QLabel(self.centralwidget)
         self.applicationLogo.setObjectName(u"applicationLogo")
-        self.applicationLogo.setPixmap(QPixmap(u"Images/lotosLogo.png"))
+        self.applicationLogo.setPixmap(QPixmap(u"../Images/lotosLogo.png"))
 
         self.verticalLayout.addWidget(self.applicationLogo)
 
