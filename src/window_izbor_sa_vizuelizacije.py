@@ -107,7 +107,7 @@ class Ui_Form_SA_Viz(object):
                 print('Graphical export rendered in file ' + file_name, file=sys.stderr)
                 gl.graphical_similarity_based_alignment_visualisation(alignment, self.labels, file_name)
                 i += 1
-        if self.checkBox_LikeAText.isChecked():
+        '''if self.checkBox_LikeAText.isChecked():
             i = 0
             for alignment in self.alignments:
                 file_name = 'graphical_report_plt__' + str(datetime.date.today()) + "__" + str(
@@ -115,7 +115,7 @@ class Ui_Form_SA_Viz(object):
                             + "_" + str(datetime.datetime.now().minute) + '__' + str(i) + '.pdf'
                 print('Graphical export rendered in file ' + file_name, file=sys.stderr)
                 gl.graphical_text_alignment_view(alignment, file_name)
-                i += 1
+                i += 1'''
 
     def ocisti_izbor(self):
         # self.checkBox_LikeAText.setChecked(False)

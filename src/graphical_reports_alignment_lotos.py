@@ -14,17 +14,18 @@ from scipy.cluster.hierarchy import linkage, dendrogram
 
 # function for similarity based visualisation of pairwise alignment
 def graphical_similarity_based_alignment_visualisation(alignment, labels = None, filename='output_similarity_based.pdf', matrix = sequence.align.SubstitutionMatrix.std_protein_matrix()):
-  fig = plt.figure()
+  fig = plt.figure(num='Vizuelizacija bazirana na slicnosti')
   gs = fig.add_gridspec(1, 1)
   ax = fig.add_subplot(gs[0, 0])
 
-  ax.set_title("Vizuelizacija poravnanja izmedju dve sekvence bazirana na slicnosti")
+  ax.set_title(num="Vizuelizacija poravnanja izmedju dve sekvence bazirana na slicnosti")
   graphics.plot_alignment_similarity_based(
   ax, alignment, matrix=matrix,
   show_numbers=True, show_line_position=True, color='cornflowerblue',
   symbols_per_line=30, labels = labels
   )
   plt.savefig(filename)
+  plt.show()
 
 
 # function for classic visualisation of pairwise alignment
@@ -38,17 +39,14 @@ def graphical_classic_alignment_visualisation(alignment, labels = None, filename
     symbols_per_line=50, labels = labels
   )
 
-
-  ax.set_title("Klasicna vizuelizacija poravnanja izmedju dve sekvence")
-
-  plt.show()
-
+  ax.set_title(num="Klasicna vizuelizacija poravnanja izmedju dve sekvence")
   plt.savefig(filename)
+  plt.show()
 
 
 # function for classic visualisation of multiple alignment
 def graphical_classic_multi_alignment_visualisation(alignment_data, labels, filename='output_classic_multi_alignment.pdf'):
-  fig = plt.figure()
+  fig = plt.figure(num='Klasicna vizuelizacija poravnanja')
   gs = fig.add_gridspec(1, 1)
   ax = fig.add_subplot(gs[0, 0])
   print(alignment_data['alignment'], flush=True)
@@ -56,8 +54,9 @@ def graphical_classic_multi_alignment_visualisation(alignment_data, labels, file
     ax, alignment_data['alignment'], labels = labels, symbols_per_line=30,
     show_numbers=True, color_scheme="flower"
   )
-  ax.set_title("Vizuelizacija visestrukog poravnanja sekvenci")
+  ax.set_title(num="Vizuelizacija visestrukog poravnanja sekvenci")
   plt.savefig(filename)
+  plt.show()
 
 
 # function for visualisation of dendrogram obtained by agglomerative clustering based on obtained distances of sequences
@@ -70,21 +69,23 @@ def graphical_dendrogram_by_hierarchical_clustering(alignment_data, linkage_t ='
   plt.ylabel('Rastojanje')
   plt.title('Dendrogram dobijen algoritmom hijerarhijskog klasterovanja ($' + linkage_t + '$'  + '$linkage$)')
   plt.savefig(file_name)
+  plt.show()
 
 
 # function for visualisation of dendrogram based on obtained distances of sequences
 def graphical_dendrogram_multi_alignment_visualisation(alignment_data, labels = None, filename='output_dendrogram_multi_alignment.pdf'):
-  fig = plt.figure()
+  fig = plt.figure(num='Stablo spajanja dobijeno od matrice spajanja')
   gs = fig.add_gridspec(1, 1)
   ax = fig.add_subplot(gs[0, 0])
   graphics.plot_dendrogram(ax, alignment_data['tree'], labels = labels, color='darkslateblue', orientation='top')
   ax.set_title("Drvo spajanja na osnovu matrice rastojanja")
   plt.savefig(filename)
+  plt.show()
 
 
 # function for visualisation of heatmap based on obtained distances of sequences
 def graphical_heatmap_multi_alignment_visualisation(alignment_data, labels = None, filename='output_heatmap_multi_alignment.pdf'):
-  fig = plt.figure()
+  fig = plt.figure(num='Toplotna mapa rastojanja sekvenci')
   gs = fig.add_gridspec(1, 1)
   ax = fig.add_subplot(gs[0, 0])
   ax.set_title('Matrica rastojanja izrazena toplotnom mapom')
@@ -96,6 +97,7 @@ def graphical_heatmap_multi_alignment_visualisation(alignment_data, labels = Non
 
   print(alignment_data['distance_matrix'])
   plt.savefig(filename)
+  plt.show()
 
 
 '''  -- Deprecated.
