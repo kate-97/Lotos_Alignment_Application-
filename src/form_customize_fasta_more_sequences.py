@@ -106,7 +106,7 @@ class Ui_Form_more_sequences(QWidget):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.label.setText(QCoreApplication.translate("Form", u"Izaberi FASTA datoteke sekvenci", None))
-        self.label_2.setText(QCoreApplication.translate("Form", u"Broj ucitanih sekvenci:", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"Broj ucitanih datoteka:", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"0", None))
         self.pushButton.setText(QCoreApplication.translate("Form", u"Otvori novu datoteku", None))
         self.pushButton_2.setText(QCoreApplication.translate("Form", u"Izvrsi poravnanje", None))
@@ -136,6 +136,7 @@ class Ui_Form_more_sequences(QWidget):
             return
 
         print("Vrsimo poravnanje vise aa sekvence")
+
         labels, alignment_data, lines = execute_alignment_and_generate_report(self.fastaFilePaths)
         self.windowAlignmentReport.clearContent()
         self.windowAlignmentReport.set_alignment_data(alignment_data)

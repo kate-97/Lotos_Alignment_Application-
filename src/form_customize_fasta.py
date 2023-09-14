@@ -20,7 +20,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFormLayout, QHBoxLayout, QLabel,
                                QPushButton, QSizePolicy, QTextEdit, QVBoxLayout,
-                               QWidget, QMainWindow, QFileDialog, QListWidget, QMessageBox, QCheckBox)
+                               QWidget, QMainWindow, QFileDialog, QListWidget, QMessageBox, QCheckBox, QComboBox)
 
 from alignments_lotos import *
 from form_tekstualni_izvestaj_poravnanja import *
@@ -69,13 +69,44 @@ class Ui_Form(QWidget):
         self.checkBoxLokalno.setObjectName(u"checkBoxLokalno")
 
         self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.checkBoxLokalno)
+        self.labelKaznaOtvaranja = QLabel(Form)
+        self.labelKaznaOtvaranja.setObjectName(u"labelKaznaOtvaranja")
 
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.labelKaznaOtvaranja)
+
+        self.comboBoxKaznaOtvaranja = QComboBox(Form)
+        self.comboBoxKaznaOtvaranja.addItem("1")
+        self.comboBoxKaznaOtvaranja.addItem("5")
+        self.comboBoxKaznaOtvaranja.addItem("10")
+        self.comboBoxKaznaOtvaranja.addItem("15")
+        self.comboBoxKaznaOtvaranja.addItem("25")
+        self.comboBoxKaznaOtvaranja.addItem("50")
+        self.comboBoxKaznaOtvaranja.addItem("100")
+        self.comboBoxKaznaOtvaranja.setCurrentIndex(2)
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.comboBoxKaznaOtvaranja)
+
+        self.labelKaznaNastavka = QLabel(Form)
+        self.labelKaznaNastavka.setObjectName(u"labelKaznaNastavka")
+
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.labelKaznaNastavka)
+
+        self.comboBoxKaznaNastavka = QComboBox(Form)
+        self.comboBoxKaznaNastavka.addItem("0")
+        self.comboBoxKaznaNastavka.addItem("1")
+        self.comboBoxKaznaNastavka.addItem("5")
+        self.comboBoxKaznaNastavka.addItem("10")
+
+        self.comboBoxKaznaNastavka.setCurrentIndex(0)
+
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.comboBoxKaznaNastavka)
         self.verticalLayout.addLayout(self.formLayout_2)
 
         self.formLayout = QFormLayout()
         self.formLayout.setObjectName(u"formLayout")
         self.label_2 = QLabel(Form)
         self.label_2.setObjectName(u"label_2")
+
 
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_2)
 
@@ -117,12 +148,14 @@ class Ui_Form(QWidget):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.label.setText(QCoreApplication.translate("Form", u"Izaberi FASTA datoteke sekvenci", None))
-        self.label_2.setText(QCoreApplication.translate("Form", u"Broj ucitanih sekvenci:", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"Broj ucitanih datoteka:", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"0", None))
         self.checkBoxGlobalno.setText(QCoreApplication.translate("Form", u"Globalno poravnanje", None))
         self.checkBoxLokalno.setText(QCoreApplication.translate("Form", u"Lokalno poravnanje", None))
         self.pushButton.setText(QCoreApplication.translate("Form", u"Otvori novu datoteku", None))
         self.pushButton_2.setText(QCoreApplication.translate("Form", u"Izvrsi poravnanje", None))
+        self.labelKaznaOtvaranja.setText(QCoreApplication.translate("Form", u"Kazna za otvaranje prazine:", None))
+        self.labelKaznaNastavka.setText(QCoreApplication.translate("Form", u"Kazna za nastavljanje prazina:", None))
     # retranslateUi
 
     def clearContent(self):
@@ -146,12 +179,12 @@ class Ui_Form(QWidget):
         self.label_3.setText(str(int(self.label_3.text())+1))
 
     def omotacIzvrsiPoravnanje(self):
-        if int(self.label_3.text()) < 2:
+        '''if int(self.label_3.text()) < 2:
             msgBox = QMessageBox()
             msgBox.setWindowTitle("Nedovoljno ucitanih sekvenci")
             msgBox.setText("Ucitaj sekvence za poravnanje")
             msgBox.exec()
-            return
+            return'''
 
         if not self.checkBoxLokalno.isChecked() and not self.checkBoxGlobalno.isChecked():
             msgBox = QMessageBox()
@@ -168,17 +201,19 @@ class Ui_Form(QWidget):
             return
 
         print("Vrsimo poravnanje 2 aa sekvence")
+        open_penalty = -int(self.comboBoxKaznaOtvaranja.currentText())
+        continue_penalty = -int(self.comboBoxKaznaNastavka.currentText())
         lines = []
         aligns = []
         labels = []
         if self.checkBoxLokalno.isChecked():
-            result = execute_alignment_and_generate_report(self.fastaFilePaths, type_a='l')
+            result = execute_alignment_and_generate_report(self.fastaFilePaths, type_a='l', open_penalty=open_penalty, continue_penalty=continue_penalty)
             aligns = result[1]
             lines += result[2]
             labels = result[0]
 
         elif self.checkBoxGlobalno.isChecked():
-            result = execute_alignment_and_generate_report(self.fastaFilePaths, type_a='g')
+            result = execute_alignment_and_generate_report(self.fastaFilePaths, type_a='g', open_penalty=open_penalty, continue_penalty=continue_penalty)
             aligns = result[1]
             lines += result[2]
             labels = result[0]
@@ -186,7 +221,6 @@ class Ui_Form(QWidget):
         self.windowAlignmentReport.clearContent()
         self.windowAlignmentReport.setAlignments(aligns)
         self.windowAlignmentReport.setReportLines(lines)
-
 
         for line in lines:
             self.windowAlignmentReport.ui.list_Izvestaj.addItem(line)

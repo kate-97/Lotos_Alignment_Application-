@@ -36,7 +36,7 @@ def read_sequences_from_fasta(paths):
 
 
 # function for generating textual report for alignment of two AA sequences
-def generate_pairwise_alignment_report(aligns, output_file = True):
+def generate_pairwise_alignment_report(aligns, output_file = True, open_penalty=-10, continue_penalty=0):
     lines = []
     lines.append("*****************")
     print("*****************")
@@ -73,8 +73,14 @@ def generate_pairwise_alignment_report(aligns, output_file = True):
         print("Broj insercija: " + str(number_of_insertions))
         lines.append(("Broj delecija: " + str(number_of_deletions)))
         print("Broj delecija: " + str(number_of_deletions))
+        lines.append(("Kazna za otvaranje praznina: " + str(open_penalty)))
+        print(("Kazna za otvaranje praznina: " + str(open_penalty)))
+        lines.append(("Kazna za produzavanje praznina: " + str(continue_penalty)))
+        print(("Kazna za produzavanje praznina: " + str(continue_penalty)))
         lines.append(("Mera identity: " + str(align.get_sequence_identity(a))))
         print("Mera identity: " + str(align.get_sequence_identity(a)))
+        lines.append("")
+        print("Skor: " + str(align.score(a, align.SubstitutionMatrix.std_protein_matrix())))
         lines.append("")
         print()
 
@@ -133,21 +139,21 @@ def generate_pairwise_alignment_report(aligns, output_file = True):
 
 
 # function which calls appropriate function for alignment of two AA sequences
-def execute_alignment_of_two_aa_sequences(sequences, type_a="l", matrix=align.SubstitutionMatrix.std_protein_matrix()):
+def execute_alignment_of_two_aa_sequences(sequences, type_a="l", matrix=align.SubstitutionMatrix.std_protein_matrix(), open_penalty=-10, continue_penalty=0):
     seq1 = sequence.ProteinSequence(sequences[0])
     seq2 = sequence.ProteinSequence(sequences[1])
     aligns = None
 
     if type_a == "l":
-        aligns = align.align_optimal(seq1, seq2, matrix=matrix, local=True)
+        aligns = align.align_optimal(seq1, seq2, matrix=matrix, local=True, gap_penalty = (open_penalty, continue_penalty))
         aligns = aligns[0]
     else:
-        aligns = align.align_optimal(seq1, seq2, matrix=matrix, local=False)
+        aligns = align.align_optimal(seq1, seq2, matrix=matrix, local=False, gap_penalty = (open_penalty, continue_penalty))
         aligns = aligns[0]
     return [aligns]
 
 # wrapper function in which is called function for execution alignment and function for generating textual reports
-def execute_alignment_and_generate_report(paths, type_a='l', matrix = align.SubstitutionMatrix.std_protein_matrix()):
+def execute_alignment_and_generate_report(paths, type_a='l', matrix = align.SubstitutionMatrix.std_protein_matrix(), open_penalty=-10, continue_penalty=0):
     sequences_with_metadata = read_sequences_from_fasta(paths)
     sequences = sequences_with_metadata[1]
     labels = sequences_with_metadata[0]
@@ -155,15 +161,15 @@ def execute_alignment_and_generate_report(paths, type_a='l', matrix = align.Subs
     lines = []
 
     if type_a == 'l':
-        aligns = execute_alignment_of_two_aa_sequences(sequences, type_a="l", matrix = matrix)
+        aligns = execute_alignment_of_two_aa_sequences(sequences, type_a="l", matrix = matrix, open_penalty = open_penalty, continue_penalty = continue_penalty)
         lines.append("Izvestaj lokalnog poravnanja izmedju dve proteinske sekvence:")
         print("Izvestaj lokalnog poravnanja izmedju dve proteinske sekvence:")
         lines += generate_pairwise_alignment_report(aligns)
 
     else:
-        aligns = execute_alignment_of_two_aa_sequences(sequences, type_a="g", matrix = matrix)
+        aligns = execute_alignment_of_two_aa_sequences(sequences, type_a="g", matrix = matrix,  open_penalty=-10, continue_penalty=0)
         lines.append("Izvestaj globalnog poravnanja izmedju dve proteinske sekvence:")
         print("Izvestaj globalnog poravnanja izmedju dve proteinske sekvence:")
-        lines += generate_pairwise_alignment_report(aligns)
+        lines += generate_pairwise_alignment_report(aligns, open_penalty=open_penalty, continue_penalty=continue_penalty)
 
     return [labels, aligns, lines]
