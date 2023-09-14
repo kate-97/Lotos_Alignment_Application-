@@ -59,10 +59,10 @@ class Ui_Form_SA_Viz(object):
 
         self.verticalLayout.addWidget(self.checkBox_SimilarityBased)
 
-        self.checkBox_LikeAText = QCheckBox(Form)
-        self.checkBox_LikeAText.setObjectName(u"checkBox_LikeAText")
+        #self.checkBox_LikeAText = QCheckBox(Form)
+        #self.checkBox_LikeAText.setObjectName(u"checkBox_LikeAText")
 
-        self.verticalLayout.addWidget(self.checkBox_LikeAText)
+        #self.verticalLayout.addWidget(self.checkBox_LikeAText)
 
         self.pb_Generisi = QPushButton(Form)
         self.pb_Generisi.setObjectName(u"pb_Generisi")
@@ -84,7 +84,7 @@ class Ui_Form_SA_Viz(object):
         self.label.setText(QCoreApplication.translate("Form", u"Izaberi zeljenu vizuelizaciju/vizuelizacije", None))
         self.checkBox_Classic.setText(QCoreApplication.translate("Form", u"Klasicna vizuelizacija poravnanja", None))
         self.checkBox_SimilarityBased.setText(QCoreApplication.translate("Form", u"Vizuelizacija bazirana na slicnosti", None))
-        self.checkBox_LikeAText.setText(QCoreApplication.translate("Form", u"Vizuelizacija kao u tekstu", None))
+        # self.checkBox_LikeAText.setText(QCoreApplication.translate("Form", u"Vizuelizacija kao u tekstu", None))
         self.pb_Generisi.setText(QCoreApplication.translate("Form", u"Generisi vizuelizacije", None))
     # retranslateUi
 
@@ -118,7 +118,7 @@ class Ui_Form_SA_Viz(object):
                 i += 1
 
     def ocisti_izbor(self):
-        self.checkBox_LikeAText.setChecked(False)
+        # self.checkBox_LikeAText.setChecked(False)
         self.checkBox_Classic.setChecked(False)
         self.checkBox_SimilarityBased.setChecked(False)
         self.alignments = []

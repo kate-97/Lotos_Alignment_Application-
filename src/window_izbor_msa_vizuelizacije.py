@@ -157,7 +157,7 @@ class Ui_Form_MSA_Viz(object):
                     datetime.datetime.now().hour) \
                             + "_" + str(datetime.datetime.now().minute) + '.pdf'
                 print('Graphical export rendered in file ' + file_name, file=sys.stderr)
-                gl.graphical_dendrogram_by_hierarchical_clustering(self.alignment_data, 'avg', file_name)
+                gl.graphical_dendrogram_by_hierarchical_clustering(self.alignment_data, 'average', file_name)
             elif self.rb_complete.isChecked():
                 file_name = 'graphical_report_clustering_dendrogram_complete_linkage__' + str(
                     datetime.date.today()) + "__" + str(
