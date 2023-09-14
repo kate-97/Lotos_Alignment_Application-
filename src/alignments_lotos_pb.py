@@ -50,6 +50,17 @@ matrix_substitution = create_matrix()
 LENGTH_HEADER = 25
 BREAK_LENGTH = 50
 
+# utility function for name compress
+def decrease_name_size(name):
+    pos = name.rfind('/')
+    s = name[pos+1:]
+    posp = s.find('.')
+    s1 = s[:posp]
+    pos = s.rfind(' ')
+    s2 = s[pos+1:]
+    s = s1 + '-' +s2
+    print(s)
+    return s
 
 # function for parsing protein blocks from FASTA files
 def read_sequences_from_fasta(paths):
@@ -64,7 +75,7 @@ def read_sequences_from_fasta(paths):
             return None
 
         for name, sequence in [list(fasta_file.items())[0]]:
-            names.append(name)
+            names.append(decrease_name_size(name))
             sequence = load_pb_data.transform_seq_line(sequence)
 
 

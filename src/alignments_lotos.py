@@ -8,11 +8,13 @@ import biotite.sequence as sequence
 
 # utility function for name compress
 def decrease_name_size(name):
-    ind = name.rindex('|')
-    s = name[ind+1:]
-    # print(s)
-    rind = s.find(' ')
-    # print(s[:rind])
+    lind = name.find('|')
+    s = name[lind+1:]
+    rind = s.find('|')
+
+    if rind == '-1':
+        rind = s.find(' ')
+
     return s[:rind]
 
 
@@ -28,7 +30,11 @@ def read_sequences_from_fasta(paths):
 
     for path in paths:
         fasta_file = fasta.FastaFile.read(path)
-        for name, sequence in fasta_file.items():
+
+        if len(list(fasta_file.items())) == 0:
+            return None
+
+        for name, sequence in [list(fasta_file.items())[0]]:
             names.append(decrease_name_size(name))
             sequences.append(sequence)
 
@@ -80,6 +86,7 @@ def generate_pairwise_alignment_report(aligns, output_file = True, open_penalty=
         lines.append(("Mera identity: " + str(align.get_sequence_identity(a))))
         print("Mera identity: " + str(align.get_sequence_identity(a)))
         lines.append("")
+        lines.append(("Skor: " + str(align.score(a, align.SubstitutionMatrix.std_protein_matrix()))))
         print("Skor: " + str(align.score(a, align.SubstitutionMatrix.std_protein_matrix())))
         lines.append("")
         print()
@@ -162,14 +169,14 @@ def execute_alignment_and_generate_report(paths, type_a='l', matrix = align.Subs
 
     if type_a == 'l':
         aligns = execute_alignment_of_two_aa_sequences(sequences, type_a="l", matrix = matrix, open_penalty = open_penalty, continue_penalty = continue_penalty)
-        lines.append("Izvestaj lokalnog poravnanja izmedju dve proteinske sekvence:")
-        print("Izvestaj lokalnog poravnanja izmedju dve proteinske sekvence:")
+        lines.append("Izvestaj lokalnog poravnanja izmedju dve proteinske sekvence " + labels[0] + " i " + labels[1])
+        print("Izvestaj lokalnog poravnanja izmedju dve proteinske sekvence:" +  labels[0] + " i " + labels[1])
         lines += generate_pairwise_alignment_report(aligns)
 
     else:
         aligns = execute_alignment_of_two_aa_sequences(sequences, type_a="g", matrix = matrix,  open_penalty=-10, continue_penalty=0)
-        lines.append("Izvestaj globalnog poravnanja izmedju dve proteinske sekvence:")
-        print("Izvestaj globalnog poravnanja izmedju dve proteinske sekvence:")
+        lines.append("Izvestaj globalnog poravnanja izmedju dve proteinske sekvence:" + labels[0] + " i " + labels[1])
+        print("Izvestaj globalnog poravnanja izmedju dve proteinske sekvence:" + labels[0] + " i " + labels[1])
         lines += generate_pairwise_alignment_report(aligns, open_penalty=open_penalty, continue_penalty=continue_penalty)
 
     return [labels, aligns, lines]

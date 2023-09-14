@@ -61,12 +61,15 @@ def if_None(a):
 
 # utility function for name compress
 def decrease_name_size(name):
-    ind = name.rindex('|')
-    s = name[ind+1:]
+    pos = name.rfind('/')
+    s = name[pos+1:]
+    posp = s.find('.')
+    s1 = s[:posp]
+    pos = s.rfind(' ')
+    s2 = s[pos+1:]
+    s = s1 + '-' +s2
     print(s)
-    dind = s.find(' ')
-    print(s[:dind])
-    return s[:dind]
+    return s
 
 
 # utility constants

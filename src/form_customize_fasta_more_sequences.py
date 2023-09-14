@@ -26,13 +26,13 @@ from multiple_alignments_lotos import *
 
 
 # utility function for name compression
-def decrease_name_size(name):
+'''def decrease_name_size(name):
     ind = name.rindex('|')
     s = name[ind+1:]
     print(s)
     dind = s.find(' ')
     print(s[:dind])
-    return s[:dind]
+    return s[:dind]'''
 
 
 # class for UI form for choice FASTA files with AA sequences of desired proteins
@@ -141,8 +141,7 @@ class Ui_Form_more_sequences(QWidget):
         self.windowAlignmentReport.clearContent()
         self.windowAlignmentReport.set_alignment_data(alignment_data)
         self.windowAlignmentReport.setReportLines(lines)
-        self.windowAlignmentReport.set_labels([decrease_name_size(l) for l in labels])
-        print(labels)
+        self.windowAlignmentReport.set_labels(labels)
         for line in lines:
             self.windowAlignmentReport.ui.list_Izvestaj.addItem(line)
 

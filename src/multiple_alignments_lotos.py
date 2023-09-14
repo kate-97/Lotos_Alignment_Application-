@@ -21,12 +21,14 @@ def if_None(a):
 
 # utility function for name compress
 def decrease_name_size(name):
-    ind = name.rindex('|')
-    s = name[ind+1:]
-    print(s)
-    dind = s.find(' ')
-    print(s[:dind])
-    return s[:dind]
+    lind = name.find('|')
+    s = name[lind+1:]
+    rind = s.find('|')
+
+    if rind == '-1':
+        rind = s.find(' ')
+
+    return s[:rind]
 
 # utility constants
 LENGTH_HEADER = 25
@@ -40,7 +42,7 @@ def read_sequences_from_fasta(paths):
     for path in paths:
         fasta_file = fasta.FastaFile.read(path)
         for name, sequence in fasta_file.items():
-            names.append(name)
+            names.append(decrease_name_size(name))
             sequences.append(sequence)
 
     return [names, sequences]

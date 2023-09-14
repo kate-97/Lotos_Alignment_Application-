@@ -221,6 +221,7 @@ class Ui_Form(QWidget):
         self.windowAlignmentReport.clearContent()
         self.windowAlignmentReport.setAlignments(aligns)
         self.windowAlignmentReport.setReportLines(lines)
+        self.windowAlignmentReport.setLabels(labels)
 
         for line in lines:
             self.windowAlignmentReport.ui.list_Izvestaj.addItem(line)

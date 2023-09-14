@@ -232,8 +232,14 @@ class Ui_Form_2_pdb(QWidget):
 
     def onPbAddFileClicked(self):
         newFile = QFileDialog.getOpenFileName(self)[0]
-        pos = newFile.rindex('/')
-        newFile_s = newFile[pos + 1:]
+        newFile_s = ''
+        pos = newFile.rfind('/')
+
+        if pos == -1:
+            newFile_s =newFile
+
+        else:
+            newFile_s = newFile[pos + 1:]
 
         if newFile.endswith(".pdb") or newFile.endswith(".PDB"):
             self.listWidget.addItem("(pdb file) " + newFile_s)
