@@ -19,17 +19,18 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFormLayout, QHBoxLayout, QLabel,
                                QLineEdit, QListWidget, QListWidgetItem, QPushButton,
-                               QSizePolicy, QVBoxLayout, QWidget, QMessageBox)
+                               QSizePolicy, QVBoxLayout, QWidget, QMessageBox, QFileDialog)
 from form_tekstualni_izvestaj_visestrukog_poravnanja import *
 import multiple_alignments_lotos_pb
+import load_pb_data as lpb
 
 
 # class for UI form for input of PDB-s of desired proteins
-class Ui_Form_more_pdb(object):
+class Ui_Form_more_pdb(QWidget):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(308, 314)
+        Form.resize(550, 590)
         self.horizontalLayout = QHBoxLayout(Form)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.listWidget = QListWidget(Form)
@@ -51,8 +52,12 @@ class Ui_Form_more_pdb(object):
         self.pushButtonAddPDB = QPushButton(Form)
         self.pushButtonAddPDB.setObjectName(u"pushButtonAddPDB")
 
+        self.pushButtonAddFile = QPushButton(Form)
+        self.pushButtonAddFile.setObjectName(u"pushButtonAddFile")
+
         self.verticalLayout.addWidget(self.lineEdit)
         self.verticalLayout.addWidget(self.pushButtonAddPDB)
+        self.verticalLayout.addWidget(self.pushButtonAddFile)
 
         self.formLayout = QFormLayout()
         self.formLayout.setObjectName(u"formLayout")
@@ -74,18 +79,30 @@ class Ui_Form_more_pdb(object):
 
         self.verticalLayout.addLayout(self.formLayout)
 
+        self.horizontalLayout3 = QHBoxLayout()
+        self.horizontalLayout3.setObjectName(u"horizontalLayout3")
+        self.horizontalSpacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout3.addItem(self.horizontalSpacer)
+        self.pb_ocisti = QPushButton(Form)
+        self.pb_ocisti.setObjectName(u"pb_ocisti")
+        self.horizontalLayout3.addWidget(self.pb_ocisti)
+        self.verticalLayout.addLayout(self.horizontalLayout3)
+
 
         self.horizontalLayout.addLayout(self.verticalLayout)
 
 
         self.retranslateUi(Form)
 
-        self.pdbs = []
+        self.sources = []
         self.windowAlignmentReport = WidgetIzvestajVisestrukogPoravnanja()
 
 
         self.pushButtonAddPDB.clicked.connect(self.onPbAddPDBClicked)
         self.pushButton.clicked.connect(self.onPbClicked)
+        self.pushButtonAddFile.clicked.connect(self.onPbAddFileClicked)
+        self.pb_ocisti.clicked.connect(self.clearContent)
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi
@@ -97,33 +114,47 @@ class Ui_Form_more_pdb(object):
         self.label_Counter.setText(QCoreApplication.translate("Form", u"0", None))
         self.pushButton.setText(QCoreApplication.translate("Form", u"Izvrsi poravnanje", None))
         self.pushButtonAddPDB.setText(QCoreApplication.translate("Form", u"Dodaj PDB", None))
+        self.pb_ocisti.setText(QCoreApplication.translate("Form", u"Ocisti", None))
+        self.pushButtonAddFile.setText(QCoreApplication.translate("Form", u"Ucitaj datoteku", None))
     # retranslateUi
 
     def clearContent(self):
         self.listWidget.clear()
         self.label_Counter.setText("0")
-        self.pdbs = []
+        self.sources = []
 
     def onPbAddPDBClicked(self):
         pdb_id = self.lineEdit.text()
         self.lineEdit.clear()
         self.listWidget.addItem(pdb_id)
-        self.pdbs.append(pdb_id)
+        self.listWidget.addItem("(PDB id) " + pdb_id)
+        self.sources.append((pdb_id, "id"))
+        countPdb = int(self.label_Counter.text())
+        countPdb += 1
+        self.label_Counter.setText(str(countPdb))
+
+    def onPbAddFileClicked(self):
+        newFile = QFileDialog.getOpenFileName(self)[0]
+        pos = newFile.rindex('/')
+        newFile_s = newFile[pos + 1:]
+
+        if newFile.endswith(".pdb") or newFile.endswith(".PDB"):
+            self.listWidget.addItem("(pdb file) " + newFile_s)
+            self.sources.append((newFile, "pdb"))
+
+        else:
+            self.listWidget.addItem("(fasta file) " + newFile_s)
+            self.sources.append((newFile, "fasta"))
+
         countPdb = int(self.label_Counter.text())
         countPdb += 1
         self.label_Counter.setText(str(countPdb))
 
     def onPbClicked(self):
-        if int(self.label_Counter.text()) < 2:
-            msgBox = QMessageBox()
-            msgBox.setWindowTitle("Nedovoljno ucitanih sekvenci")
-            msgBox.setText("Ucitaj sekvence za poravnanje")
-            msgBox.exec()
-            return
-
         print("Vrsimo poravnanje vise pb sekvenci")
+        self.sources = lpb.generate_fastas(self.sources)
 
-        result_ = multiple_alignments_lotos_pb.execute_alignment_and_generate_report(self.pdbs)
+        result_ = multiple_alignments_lotos_pb.execute_alignment_and_generate_report(self.sources)
         if result_ is None:
             msgBox = QMessageBox()
             msgBox.setWindowTitle("Neispravna sekvenca")

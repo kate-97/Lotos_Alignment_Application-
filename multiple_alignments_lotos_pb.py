@@ -78,7 +78,6 @@ def read_sequences_from_fasta(path):
     names = []
     sequences = []
 
-
     fasta_file = fasta.FastaFile.read(path)
     for name, sequence in fasta_file.items():
         names.append(name)
@@ -178,15 +177,10 @@ def generate_multi_alignment_report(align, pb_sequences, labels, distance_matrix
 
 
 # function for executing multiple PB alignment and generating textual report of this alignment
-def execute_alignment_and_generate_report(pdbs):
-    fasta__files = []
-    for pdb in pdbs:
-        load_pb_data.load_pb_format(pdb)
-        fasta__files.append(pdb + ".PB.fasta")
-
+def execute_alignment_and_generate_report(sources):
     sequences = []
     labels = []
-    for fasta__f in fasta__files:
+    for fasta__f in sources:
         results = read_sequences_from_fasta(fasta__f)
         if results is None:
             return None

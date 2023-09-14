@@ -58,7 +58,12 @@ def read_sequences_from_fasta(paths):
 
     for path in paths:
         fasta_file = fasta.FastaFile.read(path)
-        for name, sequence in fasta_file.items():
+
+        if len(list(fasta_file.items())) == 0:
+            print(" No sequences in file " + fasta_file, file=sys.stderr)
+            return None
+
+        for name, sequence in [list(fasta_file.items())[0]]:
             names.append(name)
             sequence = load_pb_data.transform_seq_line(sequence)
 
@@ -174,7 +179,7 @@ def generate_pairwise_alignment_report(aligns, output_file = True):
 
 
 # function for execution alignment of two PB sequences
-def execute_alignment_of_two_pb_sequences(sequences, type_a="l"):
+def execute_alignment_of_two_pb_sequences(sequences, type_a="l", open_penalty = -10, continue_penalty = 0):
     sequences = [load_pb_data.transform_seq_line(s) for s in sequences]
     sequences_pb = [sequence.GeneralSequence(pb_alphabet, sequence = s)
                     for s in sequences]
@@ -182,17 +187,17 @@ def execute_alignment_of_two_pb_sequences(sequences, type_a="l"):
     aligns = None
 
     if type_a == "l":
-        aligns = align.align_optimal(sequences_pb[0], sequences_pb[1], matrix=matrix_substitution, local=True)
+        aligns = align.align_optimal(sequences_pb[0], sequences_pb[1], matrix=matrix_substitution, local=True, gap_penalty=(open_penalty, continue_penalty))
         aligns = aligns[0]
     else:
-        aligns = align.align_optimal(sequences_pb[0], sequences_pb[1], matrix=matrix_substitution, local=False)
+        aligns = align.align_optimal(sequences_pb[0], sequences_pb[1], matrix=matrix_substitution, local=False, gap_penalty=(open_penalty, continue_penalty))
         aligns = aligns[0]
 
     return [aligns]
 
 
 # wrapper function for execution alignment and generating textual report
-def execute_alignment_and_generate_report(paths, type_a='l', matrix = matrix_substitution):
+def execute_alignment_and_generate_report(paths, type_a='l', open_penalty = -10, continue_penalty = 0, matrix = matrix_substitution):
     sequences_with_metadata = read_sequences_from_fasta(paths)
 
     if sequences_with_metadata is None:
@@ -204,26 +209,15 @@ def execute_alignment_and_generate_report(paths, type_a='l', matrix = matrix_sub
     lines = []
 
     if type_a == 'l':
-        aligns = execute_alignment_of_two_pb_sequences(sequences, type_a="l")
+        aligns = execute_alignment_of_two_pb_sequences(sequences, type_a="l", open_penalty=open_penalty, continue_penalty=continue_penalty)
         lines.append("Izvestaj lokalnog poravnanja izmedju dve PB sekvence:")
         print("Izvestaj lokalnog poravnanja izmedju dve PBsekvence:")
         lines += generate_pairwise_alignment_report(aligns)
 
     else:
-        aligns = execute_alignment_of_two_pb_sequences(sequences, type_a="g")
+        aligns = execute_alignment_of_two_pb_sequences(sequences, type_a="g",open_penalty=open_penalty, continue_penalty=continue_penalty)
         lines.append("Izvestaj globalnog poravnanja izmedju dve PB sekvence:")
         print("Izvestaj globalnog poravnanja izmedju dve PB sekvence:")
         lines += generate_pairwise_alignment_report(aligns)
 
     return [labels, aligns, lines]
-
-
-# wrapper function for loading sequences from PDB database,
-# execution their alignment and generating report of this alignment
-def load_pbs_and_execute_pairwise_alignment_with_report(pdbs, type_a = "l"):
-    paths = []
-    for pdb in pdbs:
-        load_pb_data.load_pb_format(pdb)
-        paths.append(pdb + ".PB.fasta")
-    alignment_results = execute_alignment_and_generate_report(paths, type_a)
-    return alignment_results
